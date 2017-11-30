@@ -31,6 +31,8 @@
         #endregion
         #region Events
         public delegate void WeatherDataReceivedEventHandler(object sender, WeatherDataReceivedEventArgs e);
+        public delegate void SearchDataReceivedEventHandler(object sender, SearchDataReceivedEventArgs e);
+        public event SearchDataReceivedEventHandler SearchDataReceived;
         public event WeatherDataReceivedEventHandler WeatherDataReceived;
         #endregion
 
@@ -93,6 +95,16 @@
                 return null;
 
             return JsonConvert.DeserializeObject<Observation>(page);
+        }
+        public async Task Search(string location)
+        {
+            string format = string.Format(location_search_url_template, location, settings.Locale);
+            string page = await GetPage(format);
+
+            if (page == null)
+                return;
+
+            SearchDataReceived?.Invoke(this, SearchDataReceivedEventArgs.Report(page));
         }
     }
 }

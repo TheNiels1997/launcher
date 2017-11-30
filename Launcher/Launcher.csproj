@@ -54,6 +54,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Libraries\Weather\Events\SearchDataReceivedEventArgs.cs" />
     <Compile Include="Libraries\Weather\Events\WeatherDataReceivedEventArgs.cs" />
     <Compile Include="Libraries\Weather\Models\ClientSettings.cs" />
     <Compile Include="Libraries\Weather\Models\ForecastDay.cs" />
