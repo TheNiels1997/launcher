@@ -1,6 +1,7 @@
 ﻿namespace TWC.Weather
 {
     using Newtonsoft.Json;
+    using System;
     using System.Collections.Generic;
     using System.Net.Http;
     using System.Threading.Tasks;
@@ -34,6 +35,8 @@
         public delegate void SearchDataReceivedEventHandler(object sender, SearchDataReceivedEventArgs e);
         public event SearchDataReceivedEventHandler SearchDataReceived;
         public event WeatherDataReceivedEventHandler WeatherDataReceived;
+        public event EventHandler SearchFailed;
+        public event EventHandler WeatherUpdateFailed;
         #endregion
 
         ClientSettings settings;
@@ -66,7 +69,10 @@
             List<ForecastDay> fcast = await GetForecast();
 
             if (obs == null || fcast == null)
-                throw new System.Exception("Could not update weather. Error 1");
+            {
+                WeatherUpdateFailed?.Invoke(this, new EventArgs());
+                return;
+            }
 
             WeatherDataReceived?.Invoke(this, WeatherDataReceivedEventArgs.Report(obs, fcast));
         }
@@ -102,7 +108,10 @@
             string page = await GetPage(format);
 
             if (page == null)
+            {
+                SearchFailed?.Invoke(this, new EventArgs());
                 return;
+            }
 
             SearchDataReceived?.Invoke(this, SearchDataReceivedEventArgs.Report(page));
         }
