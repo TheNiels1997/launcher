@@ -58,6 +58,7 @@
             timer.Enabled = true;
             timer.Elapsed += Timer_Elapsed;
         }
+        public WeatherClient(ClientSettings clientSettings, object obj) { settings = clientSettings; }
 
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {

@@ -5,6 +5,7 @@
     using System;
     using System.Windows.Forms;
     using System.IO;
+    using Launcher.Forms;
 
     public partial class Form1 : Form
     {
@@ -18,7 +19,7 @@
 
         private void Form1_Load(object sender, EventArgs e)
         {
-           
+            Init();
         }
 
         private async void Init()
@@ -32,6 +33,17 @@
                 settings.Locale = "en";
                 settings.Units = "e";
 
+                using (SearchDialog diag = new SearchDialog())
+                {
+                    diag.CancelButtonEx.Visible = false;
+
+                    if (diag.ShowDialog() == DialogResult.OK)
+                    {
+                        settings.Location = (WeatherLocation)diag.SelectedItem.Tag;
+                    }
+                }
+
+                await settings.Save(wClientPath);
             }
             else
             {
@@ -39,8 +51,14 @@
             }
 
             client = new WeatherClient(settings);
+            client.WeatherDataReceived += Client_WeatherDataReceived;
             #endregion
 
+        }
+
+        private void Client_WeatherDataReceived(object sender, TWC.Weather.Events.WeatherDataReceivedEventArgs e)
+        {
+            label1.Text = e.Observation.Temperature.ToString();
         }
     }
 }
